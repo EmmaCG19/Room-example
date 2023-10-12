@@ -9,6 +9,7 @@ import com.example.tutoroomdevkiper.data.UserApp
 import com.example.tutoroomdevkiper.data.UserRepository
 import com.example.tutoroomdevkiper.databinding.ActivityMainBinding
 import com.example.tutoroomdevkiper.domain.User
+import com.example.tutoroomdevkiper.utilities.Utilities
 import com.example.tutoroomdevkiper.utilities.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,17 +47,17 @@ class MainActivity : AppCompatActivity() {
             addUser()
         }
 
+        binding.btnDelete.setOnClickListener {
+            deleteAllUsers()
+        }
+
         adapter = UserAdapter(users)
         binding.rvUsers.adapter = adapter
         binding.rvUsers.layoutManager = llmanager
     }
 
-    override fun onStart() {
-        getAllUsers()
-        super.onStart()
-    }
-
     private fun addUser() {
+        Utilities.hideKeyboard(binding.root)
         val name = binding.etName.text.toString()
         val surname = binding.etSurname.text.toString()
 
@@ -67,11 +68,14 @@ class MainActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     getAllUsers()
+                    binding.etName.text.clear()
+                    binding.etSurname.text.clear()
                 }
             }
         } else {
             toast("You must complete both fields")
         }
+
     }
 
     private fun getAllUsers() {
@@ -83,9 +87,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun deleteAllUsers() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            repository.deleteAllUsers()
+            users = emptyList()
+
+            runOnUiThread {
+                updateAdapter()
+            }
+        }
+    }
+
     private fun updateAdapter() {
         adapter.users = users
         adapter.notifyDataSetChanged()
+    }
+
+    override fun onStart() {
+        getAllUsers()
+        super.onStart()
     }
 
 }

@@ -21,4 +21,8 @@ class UserRepository(
         userDAO.insertUser(entity)
     }
 
+    suspend fun deleteAllUsers() {
+        userDAO.deleteAllUsers()
+    }
+
 }

@@ -2,5 +2,6 @@
     <string name="app_name">TutoRoomDevKiper</string>
     <string name="etSurname_hint_text">Enter your surname</string>
     <string name="etName_hint_text">Enter your name</string>
-    <string name="btn_Save">Save</string>
+    <string name="btn_save">Agregar</string>
+    <string name="btn_delete_all">DELETE SIN WHERE ⚠</string>
 </resources>
