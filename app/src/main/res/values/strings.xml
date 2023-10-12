@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TutoRoomDevKiper</string>
+    <string name="etSurname_hint_text">Enter your surname</string>
+    <string name="etName_hint_text">Enter your name</string>
+    <string name="btn_Save">Save</string>
+</resources>
