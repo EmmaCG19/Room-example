@@ -2,32 +2,91 @@ package com.example.tutoroomdevkiper.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.tutoroomdevkiper.adapter.UserAdapter
 import com.example.tutoroomdevkiper.data.UserApp
-import com.example.tutoroomdevkiper.data.UserDatabase
 import com.example.tutoroomdevkiper.data.UserRepository
 import com.example.tutoroomdevkiper.databinding.ActivityMainBinding
+import com.example.tutoroomdevkiper.domain.User
+import com.example.tutoroomdevkiper.utilities.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    //ViewBinding
     private lateinit var binding: ActivityMainBinding
-    private lateinit var repository: UserRepository
+
+    //Singleton
     private val app by lazy { applicationContext as UserApp }
+
+    //Repository
+    private lateinit var repository: UserRepository
+
+    //RecyclerView
+    private lateinit var adapter: UserAdapter
+    private val llmanager = LinearLayoutManager(this)
+
+    private var users = emptyList<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initDB()
+        initUI()
+    }
 
+    private fun initDB() {
         repository = UserRepository(app.db.userDAO())
+    }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val users = repository.getUsers()
-            Log.d("", "Table 'users' size = ${users.size ?: 0} registries")
+    private fun initUI() {
+        binding.btnSave.setOnClickListener {
+            addUser()
+        }
+
+        adapter = UserAdapter(users)
+        binding.rvUsers.adapter = adapter
+        binding.rvUsers.layoutManager = llmanager
+    }
+
+    override fun onStart() {
+        getAllUsers()
+        super.onStart()
+    }
+
+    private fun addUser() {
+        val name = binding.etName.text.toString()
+        val surname = binding.etSurname.text.toString()
+
+        if (name.trim().isNotEmpty() && surname.trim().isNotEmpty()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                //Add user
+                repository.addUser(User(name = name, surname = surname))
+
+                runOnUiThread {
+                    getAllUsers()
+                }
+            }
+        } else {
+            toast("You must complete both fields")
         }
     }
 
+    private fun getAllUsers() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            users = repository.getUsers()
+
+            runOnUiThread {
+                updateAdapter()
+            }
+        }
+    }
+    private fun updateAdapter() {
+        adapter.users = users
+        adapter.notifyDataSetChanged()
+    }
+
 }
+
