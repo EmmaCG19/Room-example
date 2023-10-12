@@ -60,5 +60,8 @@ dependencies {
 
 
     //Coroutines
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    val ktx_version = "2.6.2"
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$ktx_version") // For Activities
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$ktx_version") //For ViewModels
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$ktx_version") //For LiveData
 }
