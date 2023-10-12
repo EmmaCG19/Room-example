@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "18"
     }
 
     viewBinding {
@@ -53,7 +53,11 @@ dependencies {
     //Room
     val room_version = "2.5.2"
     implementation("androidx.room:room-ktx:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    //Issue with room with kotlin +1.9.0: https://issuetracker.google.com/issues/236612358?pli=1
+    //Temporary solution: Downgrade kotlin to 1.8.20
+
 
     //Coroutines
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
